@@ -20,7 +20,7 @@ if(isset($_REQUEST['anv']) && isset($_REQUEST['pass'])){
         // check ok
         $stmt = $conn->prepare("UPDATE anvandare SET hash=? , expire=? WHERE anvnamn=? and losenord=?");
         $hash ="tt";
-        $expire = date('Y-m-d H:i:s', strtotime("+30 minutes"));
+        $expire = date('Y-m-d H:i:s', strtotime("+300 minutes"));
         $stmt->bind_param("ssss",$hash ,$expire, $anv, $pass);
         $stmt->execute();
         echo $hash;
