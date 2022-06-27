@@ -37,4 +37,13 @@ function printarr($arr,$sep=" "){
     echo "</p>";
  
 }
+
+function deldata($table,$attribute,$value){
+    require('db.php');
+    $sql="DELETE FROM $table WHERE $attribute=$value";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+}
+
+
 ?>
