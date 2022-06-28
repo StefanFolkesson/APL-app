@@ -10,7 +10,7 @@ require_once('db.php');
 // handledare
 // skapa registrering
 
-if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
+if(all_request_set('hash','anvnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['anvnamn'];
     if (validadmin("tt",$anv)==1){
@@ -19,13 +19,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
     // skapa företag
     // skapa handledare
         // Ny elev
-        if(isset($_REQUEST['pnr']) and 
-           isset($_REQUEST['fnamn']) and 
-           isset($_REQUEST['enamn']) and 
-           isset($_REQUEST['klass']) and
-           isset($_REQUEST['epost']) and 
-           isset($_REQUEST['nyelev'])
-           ){
+        if(all_request_set('pnr','fnamn','enamn','klass','epost','nyelev')===true){
             $pnr=$_REQUEST['pnr'];
             $fnamn=$_REQUEST['fnamn'];
             $enamn=$_REQUEST['enamn'];
@@ -39,11 +33,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
 
         }
         // Ny period
-        elseif(isset($_REQUEST['periodnamn']) and 
-           isset($_REQUEST['start']) and 
-           isset($_REQUEST['nyperiod']) and  
-           isset($_REQUEST['slut'])  
-           ){
+        elseif(all_request_set('periodnamn','start','nyperiod','slut')===true){
             $periodnamn=$_REQUEST['periodnamn'];
             $start=$_REQUEST['start'];
             $slut=$_REQUEST['slut'];
@@ -55,11 +45,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
 
         } 
         // Ny arbetsplats
-        elseif(isset($_REQUEST['foretagsnamn']) and 
-           isset($_REQUEST['kontaktnummer']) and 
-           isset($_REQUEST['eport']) and  
-           isset($_REQUEST['nyttforetag'])  
-           ){
+        elseif(all_request_set('foretagsnamn','kontaktnummer','eport','nyttforetag')===true){
             $foretagsnamn=$_REQUEST['foretagsnamn'];
             $kontaktnummer=$_REQUEST['kontaktnummer'];
             $epost=$_REQUEST['epost'];
@@ -71,13 +57,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
 
         }
         // Ny handledare
-        elseif(isset($_REQUEST['anvandarnamn']) and 
-           isset($_REQUEST['losenord']) and 
-           isset($_REQUEST['fnamn']) and  
-           isset($_REQUEST['enamn']) and  
-           isset($_REQUEST['foretagid']) and  
-           isset($_REQUEST['nyhandledare'])  
-           ){
+        elseif(all_request_set('anvandarnamn','losenord','fnamn','enamn','foretagid','nyhandledare')===true){
             $anvandarnamn=$_REQUEST['anvandarnamn'];
             $losenord=$_REQUEST['losenord'];
             $fnamn=$_REQUEST['fnamn'];
@@ -91,11 +71,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
 
         }
         // Ny placering
-        elseif(isset($_REQUEST['pnr']) and 
-           isset($_REQUEST['period']) and 
-           isset($_REQUEST['foretagnamn']) and  
-           isset($_REQUEST['nyplacering'])  
-           ){
+        elseif(all_request_set('pnr','period','foretagnamn','nyplacering')===true){
             $pnr=$_REQUEST['pnr'];
             $period=$_REQUEST['period'];
             $foretagnamn=$_REQUEST['foretagnamn'];
@@ -114,7 +90,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
     else if(validhand($hash,$anv)){
 
         // datumformat : YY-MM-DD
-        if(isset($_REQUEST['datum']) and isset($_REQUEST['status']) and isset($_REQUEST['pid'])){
+        if(all_request_set('datum','status','pid')===true){
             $dag=$_REQUEST['datum'];
             // TODO: check valid date before insert
             $status=$_REQUEST['status'];
@@ -128,11 +104,6 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
         else {
             echo "wrong indata";
         }
-
-
-
-
-    // skapa registrering
 
     }
     else {

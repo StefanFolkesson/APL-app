@@ -25,7 +25,7 @@ require_once('db.php');
 // visa elever som ej är rapporterade
 // visa elever som ej är rapporterade idag...   --- Kanske samma
 
-if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
+if(all_request_set('hash','anvnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['anvnamn'];
     if (validadmin("tt",$anv)==1){

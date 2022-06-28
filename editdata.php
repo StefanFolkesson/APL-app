@@ -13,153 +13,33 @@ require_once('db.php');// admin
 // TODO: denna procedur måste knna göras mycket snyggare med en funktion då allt arbete är mer eller mindre repetetivt. 
 
 
-if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
+if(all_request_set('hash','anvnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['anvnamn'];
     if (validadmin("tt",$anv)==1){
         // Ny elev
-        if(isset($_REQUEST['editelev']) and isset($_REQUEST['originpnr'])){
-            $paramarr=array();
-            $sql="UPDATE elev SET ";
-            if(isset($_REQUEST['pnr'])) {
-                $sql=$sql."pnr=? ,";
-                array_push($paramarr,$_REQUEST['pnr']);
-            }
-            if(isset($_REQUEST['fnamn'])) {
-                array_push($paramarr,$_REQUEST['fnamn']);
-                $sql=$sql."fnamn=? ,";
-            } 
-            if(isset($_REQUEST['enamn'])){
-                array_push($paramarr,$_REQUEST['enamn']);
-                $sql=$sql."enamn=? ,";
-            }
-            if(isset($_REQUEST['klass'])){
-                array_push($paramarr,$_REQUEST['klass']);
-                $sql=$sql."klass=? ,";
-            }
-            if(isset($_REQUEST['epost'])){
-                array_push($paramarr,$_REQUEST['epost']);
-                $sql=$sql."epost=? ,";
-            } 
-            array_push($paramarr,$_REQUEST['originpnr']);
-            $sql=$sql.", WHERE pnr=?";
-            $sql=str_replace(",,","",$sql);
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
-            $stmt->execute();
-            // SEnd verification
-
+        if(all_request_set('editelev','originpnr')===true){
+            edit_table_data('elev','pnr','originpnr','pnr','fnamn','enamn','klass','epost');
         }
         // Edit period
-        elseif(isset($_REQUEST['periodnamn']) and 
-           isset($_REQUEST['editperiod'])){
-            $paramarr=array();
-            $sql="UPDATE peiod SET ";
-            if(isset($_REQUEST['start'])){
-                array_push($paramarr,$_REQUEST['start']);
-                $sql=$sql."start=? ,";
-            }
-            if(isset($_REQUEST['slut'])){
-                array_push($paramarr,$_REQUEST['slut']);
-                $sql=$sql."slut=? ,";
-            }
-            array_push($paramarr,$_REQUEST['periodnamn']);
-            $sql=$sql.", WHERE periodnamn=?";
-            $sql=str_replace(",,","",$sql);
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
-            $stmt->execute();
-            // SEnd verification
+        elseif(all_request_set('periodnamn','editperiod')===true){
+            edit_table_data('period','periodnamn','periodnamn','start','slut');
         } 
         // Edit arbetsplats
-        elseif(isset($_REQUEST['foretagsnamn']) and 
-           isset($_REQUEST['editforetag'])){
-            $paramarr=array();
-            $sql="UPDATE arbetsplats SET ";
-            if(isset($_REQUEST['kontaktnummer'])){
-                array_push($paramarr,$_REQUEST['kontaktnummer']);
-                $sql=$sql."kontaktnummer=? ,";
-            }
-            if(isset($_REQUEST['eport'])){
-                array_push($paramarr,$_REQUEST['eport']);
-                $sql=$sql."eport=? ,";
-            } 
-            array_push($paramarr,$_REQUEST['foretagsnamn']);
-            $sql=$sql.", WHERE foretagsnamn=?";
-            $sql=str_replace(",,","",$sql);
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
-            $stmt->execute();
-            // SEnd verification
+        elseif(all_request_set('foretagsnamn','editforetag')===true){
+            edit_table_data('arbetsplats','foretagsnamn','foretagsnamn','kontaktnummer','epost');
         }
         // Edit handledare
-        elseif(isset($_REQUEST['originanv']) and
-           isset($_REQUEST['edithandledare'])  
-           ){
-            $paramarr=array();
-            $sql="UPDATE anvandare SET ";
-            if(isset($_REQUEST['anvandarnamn'])){
-                array_push($paramarr,$_REQUEST['anvandarnamn']);
-                $sql=$sql."anvnamn=? ,";
-
-            } 
-            if(isset($_REQUEST['losenord'])){
-                array_push($paramarr,$_REQUEST['losenord']);
-                $sql=$sql."losenord=? ,";
-
-            } 
-            if(isset($_REQUEST['fnamn'])){
-                array_push($paramarr,$_REQUEST['fnamn']);
-                $sql=$sql."fnamn=? ,";
-
-            }  
-            if(isset($_REQUEST['enamn'])){
-                array_push($paramarr,$_REQUEST['enamn']);
-                $sql=$sql."enamn=? ,";
-
-            }  
-            if(isset($_REQUEST['foretagid'])){
-                array_push($paramarr,$_REQUEST['foretagid']);
-                $sql=$sql."foretagid=? ,";
-
-            }  
-            array_push($paramarr,$_REQUEST['originanv']);
-            $sql=$sql.", WHERE anvnamn=?";
-            echo $sql;
-            $sql=str_replace(",,","",$sql);
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
-            $stmt->execute();
-            // SEnd verification
-
+        elseif(all_request_set('originanv','edithandledare')===true){
+            edit_table_data('anvandare','anvandarnamn','originanv','anvandarnamn','losenord','fnamn','enamn','foretagid');
         }
         // Edit placering
-        elseif(isset($_REQUEST['id']) and  
-           isset($_REQUEST['editplacering'])  
-           ){
-            $paramarr=array();
-            $sql="UPDATE placering SET ";
-            if(isset($_REQUEST['personnummer'])){
-                array_push($paramarr,$_REQUEST['personnummer']);
-                $sql=$sql."personnummer=? ,";
-            }
-            if(isset($_REQUEST['period'])){
-                array_push($paramarr,$_REQUEST['period']);
-                $sql=$sql."period=? ,";
-            } 
-            if(isset($_REQUEST['foretagsnamn'])){
-                array_push($paramarr,$_REQUEST['foretagsnamn']);
-                $sql=$sql."foretagsnamn=? ,";
-            }  
-            array_push($paramarr,$_REQUEST['id']);
-            $sql=$sql.", WHERE id=?";
-            $sql=str_replace(",,","",$sql);
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
-            $stmt->execute();
-            // SEnd verification
+        elseif(all_request_set('id','editplacering')===true){
+            edit_table_data('placering','id','id','personnummer','period','foretagsnamn');
 
         }
+
+
 
         else {
             echo "wrong indata";
@@ -168,7 +48,7 @@ if(isset($_REQUEST['hash']) && isset($_REQUEST['anvnamn'])){
     else if(validhand($hash,$anv)){
 
         // datumformat : YY-MM-DD
-        if(isset($_REQUEST['datum']) and isset($_REQUEST['status']) and isset($_REQUEST['pid'])){
+        if(all_request_set('datum','status','pid')===true){
             $dag=$_REQUEST['datum'];
             // TODO: check valid date before insert
             $status=$_REQUEST['status'];

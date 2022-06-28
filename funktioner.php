@@ -1,6 +1,7 @@
 <?php
+require_once('db.php');
 function validadmin($hash,$anvnamn){
-    require('db.php');
+    global $conn;
     $stmt = $conn->prepare("SELECT expire,admin FROM anvandare WHERE hash=? and anvnamn=?");
     $stmt->bind_param("ss", $hash, $anvnamn);
     $stmt->execute();
@@ -15,7 +16,7 @@ function validadmin($hash,$anvnamn){
 }
 
 function validhand($hash,$anvnamn){
-    require('db.php');
+    global $conn;
     $stmt = $conn->prepare("SELECT expire,admin FROM anvandare WHERE hash=? and anvnamn=?");
     $stmt->bind_param("ss", $hash, $anvnamn);
     $stmt->execute();
@@ -39,10 +40,39 @@ function printarr($arr,$sep=" "){
 }
 
 function deldata($table,$attribute,$value){
-    require('db.php');
+    global $conn;
     $sql="DELETE FROM $table WHERE $attribute=$value";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
+}
+
+function all_request_set(...$req){
+    foreach ($req as $value) {
+        if(isset($_REQUEST[$value])===false){
+            return false;
+        }
+    }
+    return true;
+}
+
+function edit_table_data($table,$where,$wherevalue, ...$dbfields){
+    global $conn;
+    $paramarr=[];
+    $sqlarr=[];
+    $sql="UPDATE $table SET ";
+    foreach ($dbfields as $field) {
+        if(!empty($_REQUEST[$field])){
+            $sqlarr[]="$field=?";
+            $paramarr[]=$_REQUEST[$field];
+        }
+    }
+    $sql=$sql.implode(',',$sqlarr);
+    $sql=$sql." WHERE $where=?";
+    $paramarr[]=$_REQUEST[$where];
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
+    $stmt->execute();
+
 }
 
 
