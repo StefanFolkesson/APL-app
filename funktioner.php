@@ -95,6 +95,9 @@ function edit_table_data($table,$where,$wherevalue, ...$dbfields){
 
 function create_table_data($table, ...$dbfields){
     global $conn;
+    global $default_fail_response;
+    global $default_ok_response;
+
     $paramarr=[];
     $sqlafter=[];
     $sqlarr=[];
@@ -112,7 +115,7 @@ function create_table_data($table, ...$dbfields){
     if($stmt===false){
         giveresponse($default_fail_response);
     }
-    $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
+    $rc=$stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
     if($rc===false){
         giveresponse($default_fail_response);
     }
@@ -126,6 +129,7 @@ function create_table_data($table, ...$dbfields){
 
 function giveresponse($data){
     echo json_encode($data,JSON_FORCE_OBJECT);
+    die(); // vi skall bara få en response.... eller?
 }
 
 ?>

@@ -6,7 +6,7 @@ require_once('funktioner.php');
 $servername = "localhost";
 $username = "root";
 $password = "";
-$db = "ap";
+$db = "apl";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password,$db);
