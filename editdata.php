@@ -42,7 +42,7 @@ if(all_request_set('hash','anvnamn')===true){
 
 
         else {
-            echo "wrong indata";
+            giveresponse($default_fail_response);
         }
     }
     else if(validhand($hash,$anv)){
@@ -60,19 +60,13 @@ if(all_request_set('hash','anvnamn')===true){
             // send verification back maby
         }
         else {
-            echo "wrong indata";
+            giveresponse($default_fail_response);
         }
-
-
-
-
-    // skapa registrering
-
     }
     else {
-        echo "hash expired";
+        giveresponse($default_fail_hash_response);
     }
 }
 else {
-    echo "invalid indata";
+    giveresponse($default_fail_response);
 }

@@ -1,4 +1,5 @@
 <?php
+//error_reporting(E_ERROR);
 require_once('db.php');
 function validadmin($hash,$anvnamn){
     global $conn;
@@ -43,7 +44,14 @@ function deldata($table,$attribute,$value){
     global $conn;
     $sql="DELETE FROM $table WHERE $attribute=$value";
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    if($stmt===false){
+        giveresponse($default_fail_response);
+    }
+    $rc = $stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    giveresponse($default_ok_response);
 }
 
 function all_request_set(...$req){
@@ -70,10 +78,54 @@ function edit_table_data($table,$where,$wherevalue, ...$dbfields){
     $sql=$sql." WHERE $where=?";
     $paramarr[]=$_REQUEST[$where];
     $stmt = $conn->prepare($sql);
+    if($stmt===false){
+        giveresponse($default_fail_response);
+    }
     $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
-    $stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    $rc = $stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    giveresponse($default_ok_response);
 
 }
 
+function create_table_data($table, ...$dbfields){
+    global $conn;
+    $paramarr=[];
+    $sqlafter=[];
+    $sqlarr=[];
+    $sql="INSERT INTO $table (";
+    foreach ($dbfields as $field) {
+        if(!empty($_REQUEST[$field])){
+            $sqlarr[]="$field";
+            $sqlafter[]="?";
+            $paramarr[]=$_REQUEST[$field];
+
+        }
+    }
+    $sql=$sql.implode(',',$sqlarr).") VALUES (".implode(',',$sqlafter).")";
+    $stmt = $conn->prepare($sql);
+    if($stmt===false){
+        giveresponse($default_fail_response);
+    }
+    $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    $rc = $stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    giveresponse($default_ok_response);
+
+}
+
+function giveresponse($data){
+    echo json_encode($data,JSON_FORCE_OBJECT);
+}
 
 ?>

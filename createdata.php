@@ -9,7 +9,6 @@ require_once('db.php');
 
 // handledare
 // skapa registrering
-
 if(all_request_set('hash','anvnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['anvnamn'];
@@ -20,71 +19,25 @@ if(all_request_set('hash','anvnamn')===true){
     // skapa handledare
         // Ny elev
         if(all_request_set('pnr','fnamn','enamn','klass','epost','nyelev')===true){
-            $pnr=$_REQUEST['pnr'];
-            $fnamn=$_REQUEST['fnamn'];
-            $enamn=$_REQUEST['enamn'];
-            $klass=$_REQUEST['klass'];
-            $epost=$_REQUEST['epost'];
-            $sql="INSERT INTO elev (pnr,fnamn,enamn,klass,epost) VALUES (?,?,?,?,?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss",$pnr,$fnamn,$enamn,$klass,$epost);
-            $stmt->execute();
-            // SEnd verification
-
+            create_table_data('elev','pnr','fnamn','enamn','klass','epost');
         }
         // Ny period
         elseif(all_request_set('periodnamn','start','nyperiod','slut')===true){
-            $periodnamn=$_REQUEST['periodnamn'];
-            $start=$_REQUEST['start'];
-            $slut=$_REQUEST['slut'];
-            $sql="INSERT INTO period (periodnamn,start,slut) VALUES (?,?,?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss",$periodnamn,$start,$slut);
-            $stmt->execute();
-            // SEnd verification
-
+            create_table_data('period','periodnamn','start','slut');
         } 
         // Ny arbetsplats
         elseif(all_request_set('foretagsnamn','kontaktnummer','eport','nyttforetag')===true){
-            $foretagsnamn=$_REQUEST['foretagsnamn'];
-            $kontaktnummer=$_REQUEST['kontaktnummer'];
-            $epost=$_REQUEST['epost'];
-            $sql="INSERT INTO arbetsplats (foretagsnamn,kontaktnummer,epost) VALUES (?,?,?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss",$foretagsnamn,$kontaktnummer,$epost);
-            $stmt->execute();
-            // SEnd verification
-
+            create_table_data('arbetsplats','foretagsnamn','kontaktnummer','eport');
         }
         // Ny handledare
         elseif(all_request_set('anvandarnamn','losenord','fnamn','enamn','foretagid','nyhandledare')===true){
-            $anvandarnamn=$_REQUEST['anvandarnamn'];
-            $losenord=$_REQUEST['losenord'];
-            $fnamn=$_REQUEST['fnamn'];
-            $enamn=$_REQUEST['enamn'];
-            $foretagid=$_REQUEST['foretagid'];
-            $sql="INSERT INTO anvandare (admin,anvandarnamn,losenord,fnamn,enamn,foretagid) VALUES (0,?,?,?,?,?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss",$anvandarnamn,$losenord,$fnamn,$enamn,$foretagid);
-            $stmt->execute();
-            // SEnd verification
-
+            create_table_data('anvandare','anvandarnamn','losenord','fnamn','enamn','foretagid');
         }
         // Ny placering
         elseif(all_request_set('pnr','period','foretagnamn','nyplacering')===true){
-            $pnr=$_REQUEST['pnr'];
-            $period=$_REQUEST['period'];
-            $foretagnamn=$_REQUEST['foretagnamn'];
-            $sql="INSERT INTO placering (personnemmer,period,foretagsnamn) VALUES (?,?,?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sss",$pnr,$period,$foretagnamn);
-            $stmt->execute();
-            // SEnd verification
-
-        }
-
-        else {
-            echo "wrong indata";
+            create_table_data('placering','pnr','period','foretagnamn');
+        } else {
+            giveresponse($default_fail_response);
         }
     }
     else if(validhand($hash,$anv)){
@@ -102,14 +55,14 @@ if(all_request_set('hash','anvnamn')===true){
             // send verification back maby
         }
         else {
-            echo "wrong indata";
+            giveresponse($default_fail_response);
         }
 
     }
     else {
-        echo "hash expired";
+        giveresponse($default_fail_hash_response);
     }
 }
 else {
-    echo "invalid indata";
+    giveresponse($default_fail_response);
 }

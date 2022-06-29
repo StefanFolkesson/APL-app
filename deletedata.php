@@ -24,13 +24,13 @@ if(all_request_set('hash','anvnamn')===true){
         }
 
         else {
-            echo "wrong indata";
+            giveresponse($default_fail_response);
         }
     }
     else {
-        echo "hash expired";
+        giveresponse($default_fail_hash_response);
     }
 }
 else {
-    echo "invalid indata";
+    giveresponse($default_fail_response);
 }
