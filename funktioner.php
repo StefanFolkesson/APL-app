@@ -42,6 +42,8 @@ function printarr($arr,$sep=" "){
 
 function deldata($table,$attribute,$value){
     global $conn;
+    global $default_fail_response;
+    global $default_ok_response;
     $sql="DELETE FROM $table WHERE $attribute=$value";
     $stmt = $conn->prepare($sql);
     if($stmt===false){
@@ -65,6 +67,8 @@ function all_request_set(...$req){
 
 function edit_table_data($table,$where,$wherevalue, ...$dbfields){
     global $conn;
+    global $default_fail_response;
+    global $default_ok_response;
     $paramarr=[];
     $sqlarr=[];
     $sql="UPDATE $table SET ";
