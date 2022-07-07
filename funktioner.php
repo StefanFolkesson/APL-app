@@ -31,13 +31,30 @@ function validhand($hash,$anvnamn){
         return false;
 }
 
-function printarr($arr,$sep=" "){
-    echo "<p>";
-    foreach ($arr as $data) {
-        echo $data.$sep;
-    }
-    echo "</p>";
- 
+function printresult($result){
+    global $default_ok_response;
+    $arr=$default_ok_response;
+    $data=[];
+    while($row=$result->fetch_assoc())
+        $data[]=$row;
+    $arr['data']=$data;
+    echo json_encode($arr);
+}
+function printarray($array){
+    global $default_ok_response;
+    $arr=$default_ok_response;
+    $arr['data']=$array;
+    echo json_encode($arr);
+}
+
+function printelever($result){
+    global $default_ok_response;
+    $arr=$default_ok_response;
+    $data=[];
+    while($row=$result->fetch_assoc())
+        $data[]=$row;
+    $arr['data']=$data;
+    echo json_encode($arr);
 }
 
 function deldata($table,$attribute,$value){
@@ -45,14 +62,7 @@ function deldata($table,$attribute,$value){
     global $default_fail_response;
     global $default_ok_response;
     $sql="DELETE FROM $table WHERE $attribute=$value";
-    $stmt = $conn->prepare($sql);
-    if($stmt===false){
-        giveresponse($default_fail_response);
-    }
-    $rc = $stmt->execute();
-    if($rc===false){
-        giveresponse($default_fail_response);
-    }
+    send_query($sql);
     giveresponse($default_ok_response);
 }
 
@@ -64,6 +74,7 @@ function all_request_set(...$req){
     }
     return true;
 }
+
 
 function edit_table_data($table,$where,$wherevalue, ...$dbfields){
     global $conn;
@@ -85,7 +96,7 @@ function edit_table_data($table,$where,$wherevalue, ...$dbfields){
     if($stmt===false){
         giveresponse($default_fail_response);
     }
-    $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
+    $rc = $stmt->bind_param(str_repeat('s',count($paramarr)), ...$paramarr);
     if($rc===false){
         giveresponse($default_fail_response);
     }
@@ -136,4 +147,35 @@ function giveresponse($data){
     die(); // vi skall bara få en response.... eller?
 }
 
+function send_query($sql){
+    global $conn;
+    global $default_fail_response;
+    $stmt = $conn->prepare($sql);
+    if($stmt===false){
+        giveresponse($default_fail_response);
+    }
+    $rc=$stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    return $stmt->get_result();
+}
+
+function send_param_query($sql,$binds,$paramarr){
+    global $conn;
+    global $default_fail_response;
+    $stmt = $conn->prepare($sql);
+    if($stmt===false){
+        giveresponse($default_fail_response);
+    }
+    $rc = $stmt->bind_param($binds,...$paramarr);
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    $rc = $stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    return $stmt->get_result();
+}
 ?>

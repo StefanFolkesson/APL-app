@@ -29,128 +29,73 @@ if(all_request_set('hash','anvnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['anvnamn'];
     if (validadmin("tt",$anv)==1){
-        echo "admin ok";      
-        if(isset($_REQUEST['eid'])){  // TODO: broken?
+        if(isset($_REQUEST['eid'])){  
             $eid=$_REQUEST['eid'];
-            $sql="SELECT * FROM elev WHERE pnr=?";
-            // skall ta med sin placering med. 
-            $sql2="SELECT * FROM placering WHERE personnummer=?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s",$eid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $stmt = $conn->prepare($sql2);
-            $stmt->bind_param("s",$eid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $sql="SELECT * FROM elev JOIN placering ON placering.personnummer=elev.pnr WHERE elev.pnr=?";
+            $paramsarr=[$eid];
+            $result = send_param_query($sql,"s",$paramsarr);
+            if(!is_null($result))
+            printresult($result);
         }
         if(isset($_REQUEST['elever'])){
             $sql="SELECT * FROM elev";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
         }
         if(isset($_REQUEST['pid'])){
             $pid=$_REQUEST['pid'];
             $sql="SELECT * FROM period WHERE periodnamn=?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s",$pid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $paramsarr=[$pid];
+            $result = send_param_query($sql,"s",$paramsarr);
+            if(!is_null($result))
+            printresult($result);
         }
         if(isset($_REQUEST['perioder'])){
             $sql="SELECT * FROM period";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
         }
         if(isset($_REQUEST['arbid'])){
             $arbid=$_REQUEST['arbid'];
-            $sql="SELECT * FROM arbetsplats WHERE foretagsnamn= ?";
-            //skall ta med handledare med
-            $sql2="SELECT * FROM anvandare WHERE foretagid=? ";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s",$arbid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
-            $stmt = $conn->prepare($sql2);
-            $stmt->bind_param("s",$arbid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $sql="SELECT * FROM arbetsplats JOIN anvandare ON arbetsplats.foretagsnamn=anvandare.foretagid WHERE foretagsnamn= ?";
+            $paramsarr=[$arbid];
+            $result = send_param_query($sql,"s",$paramsarr);
+            if(!is_null($result))
+            printresult($result);
         }
         if(isset($_REQUEST['arbetsplatser'])){
             $sql="SELECT * FROM arbetsplats";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
         }
 
         if(isset($_REQUEST['handid'])){
             $handid=$_REQUEST['handid'];
-            $sql="SELECT * FROM anvandare WHERE id= ?";
-            $sql2="SELECT * FROM arbetsplats WHERE foretagsnamn=? ";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s",$handid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $ftg= "";
-            while($row = $result->fetch_row()){
-                $ftg=$row[6];
-                printarr($row);
-            }
-
-            $stmt = $conn->prepare($sql2);
-            $stmt->bind_param("s",$ftg);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $sql="SELECT * FROM anvandare JOIN arbetsplats ON arbetsplats.foretagsnamn=anvandare.foretagid WHERE id= ?";
+            $paramsarr=[$handid];
+            $result = send_param_query($sql,"s",$paramsarr);
+            if(!is_null($result))
+            printresult($result);
         }
         if(isset($_REQUEST['handledare'])){
             $sql="SELECT * FROM anvandare WHERE admin=0";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
         }
         
         if(isset($_REQUEST['rapporterade'])){
             // visa rapporterade elever   
-            // WARNING___ NOT CHECKED!!!!
-            $sql="SELECT * FROM närvarande WHERE dag=now()";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                printarr($row);
-            }
+            $sql="SELECT * FROM narvarande WHERE dag=now()";
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
         }
 
-        if(isset($_REQUEST['rappidag'])){
+        if(isset($_REQUEST['rappidag'])){   // Ok, Fixa fråga? no errorcheck
             // visa alla elever som skall rapporteras idag
             // TODO: Måste fixa till frågan så det inte ser ut såhär!!!!
             // Plocka ut vilken period det är just nu
@@ -158,6 +103,7 @@ if(all_request_set('hash','anvnamn')===true){
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->get_result();
+            $data=[];
             while($row = $result->fetch_row()){
                 // kan vara fler perioder
                 $period = $row[0];
@@ -184,60 +130,53 @@ if(all_request_set('hash','anvnamn')===true){
                         $stmt4->execute();
                         $result4 = $stmt4->get_result();
                         $row4 = $result4->fetch_row();
-                        echo "<p>$row4[1], $row4[0] : Ej registrerad</p>";
+                        $datarow=[$row4[1], $row4[0] , 'Ej registrerad'];
+                        $data[]=$datarow;
                     }
                     else{
-                        $row3 = $result3->fetch_row();
-                        echo "<p>$row3[3], $row3[2] : $row3[0]</p>";
+                        $row3 = $result3->fetch_row(); 
+                        $datarow=[$row3[3], $row3[2] ,$row3[0]];
+                        $data[]=$datarow;
                     }
          
                 }
     
             }
+            printarray($data);
 
         }
 
-        if(isset($_REQUEST['orapporterade'])){
+        if(isset($_REQUEST['orapporterade'])){  // OK
             // visa ej rapporterade elever
-            $sql="SELECT periodnamn FROM period WHERE start<now() and slut>now()";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                // kan vara fler perioder
-                $period = $row[0];
-                // plocka ut alla elever som är aktiva denna period
-                $sql2 = "SELECT * from placering WHERE period=?";
-                $stmt2 = $conn->prepare($sql2);
-                $stmt2->bind_param("s",$period);
-                $stmt2->execute();
-                $result2 = $stmt2->get_result();
-                // TODO: uteslut lö/sö och exkluderade dagar med.
-                while($row2 = $result2->fetch_row()){
-                    $pid=$row2[0];
-                    // Plocka ut all registrerad data
-                    $sql3 = "SELECT status from narvarande  where pid=?";
-                    $stmt3 = $conn->prepare($sql3);
-                    $stmt3->bind_param("s",$pid);
-                    $stmt3->execute();
-                    $result3 = $stmt3->get_result();
-                    if($result3->num_rows!=1){
-                        $pnr = $row2[1];
-                        $sql4 = "SELECT fnamn,enamn from elev  where elev.pnr=?";
-                        $stmt4 = $conn->prepare($sql4);
-                        $stmt4->bind_param("s",$pnr);
-                        $stmt4->execute();
-                        $result4 = $stmt4->get_result();
-                        $row4 = $result4->fetch_row();
-                        echo "<p>$row4[1], $row4[0] : Ej registrerad</p>";
+            $sql = "SELECT id,pnr,fnamn,enamn FROM placering 
+                    JOIN period ON placering.period=period.periodnamn 
+                    JOIN elev ON elev.pnr=placering.personnummer
+                    WHERE period.start<now() and period.slut>now()";
+            $result = send_query($sql);
+            if($result->num_rows==0){
+                printresult($result);
+            }
+            else {
+                $data=[];
+                while($row = $result->fetch_row()){
+                    $period = $row[0];
+                    $pnr=$row[1];
+                    $fnamn=$row[2];
+                    $enamn=$row[3];
+                    $dag = new DateTime("now");
+                    $dag = $dag->format("Y-m-d");
+                    $sql2 = "SELECT status FROM narvarande WHERE pid=$period and dag='$dag'";
+                    $result2 = send_query($sql2);
+                    if($result2->num_rows==0){
+                        $data[]=[$pnr,$fnamn,$fnamn];
                     }
-         
+        
                 }
-    
+                printarray($data);
             }
         }
 
-        if(isset($_REQUEST['elev'])&& isset($_REQUEST['period'])){
+        if(isset($_REQUEST['elev'])&& isset($_REQUEST['period'])){  // OK,no errorcheck
             $pnr = $_REQUEST['elev'];
             $period = $_REQUEST['period'];
             // visa rapporterad period elev
@@ -251,7 +190,6 @@ if(all_request_set('hash','anvnamn')===true){
             $stmt->execute();
             $result = $stmt->get_result();
             while($row = $result->fetch_row()){
-                printarr($row);
                 $begin = new DateTime($row[4]);
                 $end   = new DateTime($row[5]);
                 $placering = $row[0];
@@ -262,22 +200,20 @@ if(all_request_set('hash','anvnamn')===true){
                     $stmtdate = $conn->prepare($sqldate);
                     $stmtdate->execute();
                     $resultdate = $stmtdate->get_result();  
-                    if($stmtdate->num_rows>0){
+                    if($resultdate->num_rows>0){
                         $rowdate=$resultdate->fetch_row();
                         $status = $rowdate[0];
                     }
-                    echo "<p>$dag $status</p>";
+                    $datarow=[$row[1],$dag,$status];
+                    $data[]=$datarow;
                 }
 
             }
+            printarray($data);
     }
 
-
-
-
     }
-    else if(validhand($hash,$anv)){
-        echo "du är handledare";
+    else if(validhand($hash,$anv)){  // OK,no errorcheck
         if(isset($_REQUEST['idag'])){
                 // visa elever som ej är rapporterade
             // TODO: check if today is a valid day? well or not.. since an invalid day shouldnt have any records. but hey we have to do that since day isnt saved until its recorded 
@@ -290,23 +226,20 @@ if(all_request_set('hash','anvnamn')===true){
             $stmt->bind_param("s",$anv);
             $stmt->execute();
             $result= $stmt->get_result();
-            $status = "Inga elever att rapportera idag";
-                while($row=$result->fetch_row()){
-                    $sql2="SELECT status FROM narvarande WHERE pid=$row[0] AND dag=date(now())";
-                    $stmt2 = $conn->prepare($sql2);
-                    $stmt2->execute();
-                    $stmt2->store_result();
-                    if($stmt2->num_rows<=0){
-                        $status = "";
-                        printarr($row);
-                    }
+            while($row=$result->fetch_row()){
+                $sql2="SELECT status FROM narvarande WHERE pid=$row[0] AND dag=date(now())";
+                $stmt2 = $conn->prepare($sql2);
+                $stmt2->execute();
+                $result2= $stmt2->get_result();
+                if($result2->num_rows==0){
+                    printarray($row);
                 }
-            echo "<p>$status</p>";
+            }
         }
-        if(isset($_REQUEST['tillsnu'])){
+        if(isset($_REQUEST['tillsnu'])){  //Ok,no errorcheck
 
 
-            $sql = "SELECT placering.id,period.start,period.slut,elev.fnamn,elev.enamn FROM anvandare 
+            $sql = "SELECT placering.id,period.start,period.slut,elev.pnr FROM anvandare 
                 JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                 JOIN period ON placering.period=period.periodnamn
                 JOIN elev ON placering.personnummer = elev.pnr
@@ -315,10 +248,12 @@ if(all_request_set('hash','anvnamn')===true){
             $stmt->bind_param("s",$anv);
             $stmt->execute();
             $result= $stmt->get_result();
+            $data=[];
             while($row=$result->fetch_row()){
                 $begin = new DateTime($row[1]);
                 $end   = new DateTime("now");
                 $placering = $row[0];
+
                 for($i = $begin; $i < $end; $i->modify('+1 day')){
                     $dag=$i->format("Y-m-d");
                     $status="Ej registrerad";
@@ -326,22 +261,22 @@ if(all_request_set('hash','anvnamn')===true){
                     $stmtdate = $conn->prepare($sqldate);
                     $stmtdate->execute();
                     $resultdate = $stmtdate->get_result();  
-                    if($stmtdate->num_rows>0){
+                    if($resultdate->num_rows>0){
                         $rowdate=$resultdate->fetch_row();
                         $status = $rowdate[0];
                     }
-                    echo "<p>$dag $status</p>";
+                    $datarow=[$row[3],$dag,$status];
+                    $data[]=$datarow;
                 }
 
             }
+            printarray($data);
         }
-
-
     }
     else {
-        echo "hash expired";
+        giveresponse($default_fail_hash_response);
     }
 }
 else {
-    echo "invalid indata";
+    giveresponse($default_fail_response);
 }

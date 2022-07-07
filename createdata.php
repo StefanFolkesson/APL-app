@@ -52,6 +52,7 @@ if(all_request_set('hash','anvnamn')===true){
             $stmt= $conn->prepare($sql);
             $stmt->bind_param("isi",$pid,$dag,$status);
             $stmt->execute();
+            giveresponse($default_ok_response);
             // send verification back maby
         }
         else {
