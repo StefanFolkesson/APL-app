@@ -26,13 +26,13 @@ number representeras av 0 - ok 1-fel 2 - utloggad
 {
     "version":1,
     "status":number,
-    "data:{
-        row:{
+    "data:[
+        row:[
             ....
-        }
+        ]
         ...
-    }
+    ]
 }
 
 exempel:
-{"version":"1","status":"0","data":{"0":{"pnr":"121212-1212","enamn":"kalle"},"1":{"pnr":"232323-2323","enamn":"yalle"}}}
+{"version":"1","status":"0","data":[["pnr":"121212-1212","enamn":"kalle"],["pnr":"232323-2323","enamn":"yalle"]]}
