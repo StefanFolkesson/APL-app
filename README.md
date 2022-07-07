@@ -1,6 +1,8 @@
 # APL-app
 A 10 weeks assignment to create a APL -app
 
+## A react front end to this Service is being developed here:
+https://github.com/StefanFolkesson/react-apl-app
 
 Grundern är klar: 
 Jag har en 
