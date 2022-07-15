@@ -1,5 +1,5 @@
 <?php
-//error_reporting(E_ERROR);
+error_reporting(E_ERROR);
 require_once('db.php');
 function validadmin($hash,$anvnamn){
     global $conn;
@@ -102,6 +102,10 @@ function edit_table_data($table,$where,$wherevalue, ...$dbfields){
     }
     $rc = $stmt->execute();
     if($rc===false){
+        giveresponse($default_fail_response);
+    }
+
+    if($stmt->get_result()->affected_rows==0){
         giveresponse($default_fail_response);
     }
     giveresponse($default_ok_response);
