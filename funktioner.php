@@ -57,12 +57,27 @@ function printelever($result){
     echo json_encode($arr);
 }
 
-function deldata($table,$attribute,$value){
+function deldata($table,$attribute,$value,$type='string'){
     global $conn;
     global $default_fail_response;
     global $default_ok_response;
-    $sql="DELETE FROM $table WHERE $attribute=$value";
-    send_query($sql);
+    if($type=='integer'){
+        $sql="DELETE FROM $table WHERE $attribute=$value";
+    }
+    else {
+        $sql="DELETE FROM $table WHERE $attribute='$value'";
+    }
+    $stmt = $conn->prepare($sql);
+    if($stmt===false){
+        giveresponse($default_fail_response);
+    }
+    $rc = $stmt->execute();
+    if($rc===false){
+        giveresponse($default_fail_response);
+    }
+    if($stmt->affected_rows==0){
+        giveresponse($default_fail_response);
+    }
     giveresponse($default_ok_response);
 }
 
@@ -105,7 +120,7 @@ function edit_table_data($table,$where,$wherevalue, ...$dbfields){
         giveresponse($default_fail_response);
     }
 
-    if($stmt->get_result()->affected_rows==0){
+    if($stmt->affected_rows==0){
         giveresponse($default_fail_response);
     }
     giveresponse($default_ok_response);
@@ -130,6 +145,7 @@ function create_table_data($table, ...$dbfields){
         }
     }
     $sql=$sql.implode(',',$sqlarr).") VALUES (".implode(',',$sqlafter).")";
+  //  die($sql.implode(",",$paramarr));
     $stmt = $conn->prepare($sql);
     if($stmt===false){
         giveresponse($default_fail_response);

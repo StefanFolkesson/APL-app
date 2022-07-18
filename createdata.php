@@ -9,9 +9,9 @@ require_once('db.php');
 
 // handledare
 // skapa registrering
-if(all_request_set('hash','anvnamn')===true){
+if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
-    $anv=$_REQUEST['anvnamn'];
+    $anv=$_REQUEST['loginnamn'];
     if (validadmin("tt",$anv)==1){
     // skapa elev
     // skapa period
@@ -26,12 +26,12 @@ if(all_request_set('hash','anvnamn')===true){
             create_table_data('period','periodnamn','start','slut');
         } 
         // Ny arbetsplats
-        elseif(all_request_set('foretagsnamn','kontaktnummer','eport','nyttforetag')===true){
-            create_table_data('arbetsplats','foretagsnamn','kontaktnummer','eport');
+        elseif(all_request_set('foretagsnamn','kontaktnummer','epost','nyttforetag')===true){
+            create_table_data('arbetsplats','foretagsnamn','kontaktnummer','epost');
         }
         // Ny handledare
-        elseif(all_request_set('anvandarnamn','losenord','fnamn','enamn','foretagid','nyhandledare')===true){
-            create_table_data('anvandare','anvandarnamn','losenord','fnamn','enamn','foretagid');
+        elseif(all_request_set('anvnamn','losenord','fnamn','enamn','foretagid','nyhandledare')===true){
+            create_table_data('anvandare','anvnamn','losenord','fnamn','enamn','foretagid');
         }
         // Ny placering
         elseif(all_request_set('pnr','period','foretagnamn','nyplacering')===true){

@@ -3,9 +3,9 @@ require_once('funktioner.php');
 require_once('db.php');
 
 
-if(all_request_set('hash','anvnamn')===true){
+if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
-    $anv=$_REQUEST['anvnamn'];
+    $anv=$_REQUEST['loginnamn'];
     if (validadmin("tt",$anv)==1){
         if(all_request_set('pnr','delelev')===true){
             deldata("elev","pnr",$_REQUEST['pnr']);
@@ -16,8 +16,8 @@ if(all_request_set('hash','anvnamn')===true){
         elseif(all_request_set('foretagsnamn','delforetag')===true){
             deldata("arbetsplats","foretagsnamn",$_REQUEST['foretagsnamn']);
         }
-        elseif(all_request_set('anvandarnamn','delhandledare')===true){
-            deldata("anvandare","anvandarnamn",$_REQUEST['anvandarnamn']);
+        elseif(all_request_set('anvnamn','delhandledare')===true){
+            deldata("anvandare","anvnamn",$_REQUEST['anvnamn']);
         }
         elseif(all_request_set('id','delplacering')===true){
             deldata("placering","id",$_REQUEST['id']);

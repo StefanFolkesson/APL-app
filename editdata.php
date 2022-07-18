@@ -13,9 +13,9 @@ require_once('db.php');// admin
 // TODO: denna procedur måste knna göras mycket snyggare med en funktion då allt arbete är mer eller mindre repetetivt. 
 
 
-if(all_request_set('hash','anvnamn')===true){
+if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
-    $anv=$_REQUEST['anvnamn'];
+    $anv=$_REQUEST['loginnamn'];
     if (validadmin("tt",$anv)==1){
         // Ny elev
         if(all_request_set('editelev','originpnr')===true){
@@ -23,7 +23,7 @@ if(all_request_set('hash','anvnamn')===true){
         }
         // Edit period
         elseif(all_request_set('periodnamn','editperiod')===true){
-            edit_table_data('period','periodnamn','periodnamn','start','slut');
+            edit_table_data('period','periodnamn','periodnamn','periodnamn','start','slut');
         } 
         // Edit arbetsplats
         elseif(all_request_set('foretagsnamn','editforetag')===true){
@@ -31,7 +31,7 @@ if(all_request_set('hash','anvnamn')===true){
         }
         // Edit handledare
         elseif(all_request_set('originanv','edithandledare')===true){
-            edit_table_data('anvandare','anvandarnamn','originanv','anvandarnamn','losenord','fnamn','enamn','foretagid');
+            edit_table_data('anvandare','anvnamn','originanv','anvnamn','losenord','fnamn','enamn','foretagid');
         }
         // Edit placering
         elseif(all_request_set('id','editplacering')===true){
