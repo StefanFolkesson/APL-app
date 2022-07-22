@@ -6,6 +6,9 @@
 // hash
 require_once('db.php');
 require_once('funktioner.php');
+global $default_ok_response;
+global $default_fail_response;
+global $default_fail_hash_response;
 
 if(isset($_REQUEST['anv']) && isset($_REQUEST['pass'])){
     $anv = $_REQUEST['anv'];
@@ -23,16 +26,19 @@ if(isset($_REQUEST['anv']) && isset($_REQUEST['pass'])){
         $expire = date('Y-m-d H:i:s', strtotime("+300 minutes"));
         $stmt->bind_param("ssss",$hash ,$expire, $anv, $pass);
         $stmt->execute();
-        echo $hash;
-        // Fixa till så den blir lite snitsigare. json eller liknande
+
+
+        $arr=$default_ok_response;
+        $data=[];
+            $data[]=['hash'=>$hash,'user'=>$anv];
+        $arr['data']=$data;
+        echo json_encode($arr);
     }
     else {
-        echo "fel inlogg";
-        // Fixa till så den blir lite snitsigare. json eller liknande
+        giveresponse($default_fail_hash_response);
     }
 } else {
-    echo "fel indata";
-    // Fixa till så den blir lite snitsigare. json eller liknande
+    giveresponse($default_fail_response);
 
 }
 
