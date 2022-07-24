@@ -14,10 +14,12 @@ if(isset($_REQUEST['anv']) && isset($_REQUEST['pass'])){
     $anv = $_REQUEST['anv'];
     $pass= $_REQUEST['pass'];
     // Connect to DB
-    $stmt = $conn->prepare("SELECT * FROM anvandare WHERE anvnamn=? and losenord=?");
+    $stmt = $conn->prepare("SELECT admin FROM anvandare WHERE anvnamn=? and losenord=?");
     $stmt->bind_param("ss", $anv, $pass);
     $stmt->execute();
     $result = $stmt->get_result();
+    $row=$result->fetch_assoc();
+    $admin = $row['admin'];
 
     if($result->num_rows == 1){
         // check ok
@@ -30,7 +32,7 @@ if(isset($_REQUEST['anv']) && isset($_REQUEST['pass'])){
 
         $arr=$default_ok_response;
         $data=[];
-            $data[]=['hash'=>$hash,'user'=>$anv];
+            $data[]=['hash'=>$hash,'user'=>$anv,'admin'=>$admin];
         $arr['data']=$data;
         echo json_encode($arr);
     }
