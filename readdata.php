@@ -28,7 +28,8 @@ require_once('db.php');
 if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['loginnamn'];
-    if (validadmin("tt",$anv)==1){
+    $resp =validadmin("tt",$anv); 
+    if ($resp==1){
         if(isset($_REQUEST['eid'])){  
             $eid=$_REQUEST['eid'];
             $sql="SELECT * FROM elev JOIN placering ON placering.personnummer=elev.pnr WHERE elev.pnr=?";
@@ -94,6 +95,22 @@ if(all_request_set('hash','loginnamn')===true){
             if(!is_null($result))
             printresult($result);
         }
+
+        if(isset($_REQUEST['placerade'])){
+            // visa placerade elever   
+            $sql="SELECT * FROM placering";
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
+        }
+        if(isset($_REQUEST['oplacerade'])){
+            // visa oplacerade elever   
+            $sql="SELECT pnr,fnamn,enamn,klass from elev left join placering on placering.personnummer = elev.pnr where placering.personnummer IS NULL;";
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
+        }
+
 
         if(isset($_REQUEST['rappidag'])){   // Ok, Fixa fråga? no errorcheck
             // visa alla elever som skall rapporteras idag
@@ -213,11 +230,11 @@ if(all_request_set('hash','loginnamn')===true){
     }
 
     }
-    else if(validhand($hash,$anv)){  // OK,no errorcheck
+    else if($resp==0){  // OK,no errorcheck
         if(isset($_REQUEST['idag'])){
                 // visa elever som ej är rapporterade
             // TODO: check if today is a valid day? well or not.. since an invalid day shouldnt have any records. but hey we have to do that since day isnt saved until its recorded 
-            $sql = "SELECT placering.id,period.start,period.slut,elev.fnamn,elev.enamn FROM anvandare 
+            $sql = "SELECT placering.id,elev.pnr,elev.fnamn,elev.enamn FROM anvandare 
                     JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                     JOIN period ON placering.period=period.periodnamn
                     JOIN elev ON placering.personnummer = elev.pnr
@@ -226,15 +243,18 @@ if(all_request_set('hash','loginnamn')===true){
             $stmt->bind_param("s",$anv);
             $stmt->execute();
             $result= $stmt->get_result();
-            while($row=$result->fetch_row()){
-                $sql2="SELECT status FROM narvarande WHERE pid=$row[0] AND dag=date(now())";
+            $finalarr=[];
+            $status="Ej registrerad";
+            while($row=$result->fetch_assoc()){
+                $sql2="SELECT status FROM narvarande WHERE pid=".$row["id"]." AND dag=date(now())";
                 $stmt2 = $conn->prepare($sql2);
                 $stmt2->execute();
                 $result2= $stmt2->get_result();
                 if($result2->num_rows==0){
-                    printarray($row);
+                    $finalarr[]=array_merge($row,['status'=>$status]);
                 }
             }
+            printarray($finalarr);
         }
         if(isset($_REQUEST['tillsnu'])){  //Ok,no errorcheck
 
@@ -249,10 +269,10 @@ if(all_request_set('hash','loginnamn')===true){
             $stmt->execute();
             $result= $stmt->get_result();
             $data=[];
-            while($row=$result->fetch_row()){
-                $begin = new DateTime($row[1]);
+            while($row=$result->fetch_assoc()){
+                $begin = new DateTime($row['start']);
                 $end   = new DateTime("now");
-                $placering = $row[0];
+                $placering = $row['id'];
 
                 for($i = $begin; $i < $end; $i->modify('+1 day')){
                     $dag=$i->format("Y-m-d");
@@ -265,7 +285,7 @@ if(all_request_set('hash','loginnamn')===true){
                         $rowdate=$resultdate->fetch_row();
                         $status = $rowdate[0];
                     }
-                    $datarow=[$row[3],$dag,$status];
+                    $datarow=['pnr'=>$row['pnr'],'dag'=>$dag,'status'=>$status];
                     $data[]=$datarow;
                 }
 
