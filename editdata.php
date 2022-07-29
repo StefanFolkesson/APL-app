@@ -48,7 +48,7 @@ if(all_request_set('hash','loginnamn')===true){
     else if(validhand($hash,$anv)){
 
         // datumformat : YY-MM-DD
-        if(all_request_set('datum','status','pid')===true){
+        if(all_request_set('datum','status','pid')===true){  // Denna är fel!
             $dag=$_REQUEST['datum'];
             // TODO: check valid date before insert
             $status=$_REQUEST['status'];

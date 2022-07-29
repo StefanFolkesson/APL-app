@@ -34,8 +34,8 @@ if(all_request_set('hash','loginnamn')===true){
             create_table_data('anvandare','anvnamn','losenord','fnamn','enamn','foretagid');
         }
         // Ny placering
-        elseif(all_request_set('pnr','period','foretagnamn','nyplacering')===true){
-            create_table_data('placering','pnr','period','foretagnamn');
+        elseif(all_request_set('personnummer','period','foretagsnamn','nyplacering')===true){
+            create_table_data('placering','personnummer','period','foretagsnamn');
         } else {
             giveresponse($default_fail_response);
         }

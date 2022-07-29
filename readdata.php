@@ -165,7 +165,7 @@ if(all_request_set('hash','loginnamn')===true){
 
         if(isset($_REQUEST['orapporterade'])){  // OK
             // visa ej rapporterade elever
-            $sql = "SELECT id,pnr,fnamn,enamn FROM placering 
+            $sql = "SELECT pid,pnr,fnamn,enamn FROM placering 
                     JOIN period ON placering.period=period.periodnamn 
                     JOIN elev ON elev.pnr=placering.personnummer
                     WHERE period.start<now() and period.slut>now()";
@@ -234,7 +234,7 @@ if(all_request_set('hash','loginnamn')===true){
         if(isset($_REQUEST['idag'])){
                 // visa elever som ej är rapporterade
             // TODO: check if today is a valid day? well or not.. since an invalid day shouldnt have any records. but hey we have to do that since day isnt saved until its recorded 
-            $sql = "SELECT placering.id,elev.pnr,elev.fnamn,elev.enamn FROM anvandare 
+            $sql = "SELECT placering.pid,elev.pnr,elev.fnamn,elev.enamn FROM anvandare 
                     JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                     JOIN period ON placering.period=period.periodnamn
                     JOIN elev ON placering.personnummer = elev.pnr
@@ -246,7 +246,7 @@ if(all_request_set('hash','loginnamn')===true){
             $finalarr=[];
             $status="Ej registrerad";
             while($row=$result->fetch_assoc()){
-                $sql2="SELECT status FROM narvarande WHERE pid=".$row["id"]." AND dag=date(now())";
+                $sql2="SELECT status FROM narvarande WHERE pid=".$row["pid"]." AND dag=date(now())";
                 $stmt2 = $conn->prepare($sql2);
                 $stmt2->execute();
                 $result2= $stmt2->get_result();
@@ -259,7 +259,7 @@ if(all_request_set('hash','loginnamn')===true){
         if(isset($_REQUEST['tillsnu'])){  //Ok,no errorcheck
 
 
-            $sql = "SELECT placering.id,period.start,period.slut,elev.pnr FROM anvandare 
+            $sql = "SELECT placering.pid,period.start,period.slut,elev.pnr FROM anvandare 
                 JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                 JOIN period ON placering.period=period.periodnamn
                 JOIN elev ON placering.personnummer = elev.pnr
@@ -272,7 +272,7 @@ if(all_request_set('hash','loginnamn')===true){
             while($row=$result->fetch_assoc()){
                 $begin = new DateTime($row['start']);
                 $end   = new DateTime("now");
-                $placering = $row['id'];
+                $placering = $row['pid'];
 
                 for($i = $begin; $i < $end; $i->modify('+1 day')){
                     $dag=$i->format("Y-m-d");
