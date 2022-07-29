@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Värd: 127.0.0.1
--- Tid vid skapande: 24 jun 2022 kl 20:24
--- Serverversion: 10.4.21-MariaDB
--- PHP-version: 8.0.10
+-- Tid vid skapande: 29 jul 2022 kl 10:11
+-- Serverversion: 10.4.22-MariaDB
+-- PHP-version: 8.0.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -44,9 +44,10 @@ CREATE TABLE `anvandare` (
 --
 
 INSERT INTO `anvandare` (`id`, `admin`, `anvnamn`, `losenord`, `fnamn`, `enamn`, `foretagid`, `hash`, `expire`) VALUES
-(1, 0, 'kalle', 'kalle', 'Pelle', 'Persson', 'combitech', 'tt', '2022-06-23 11:42:19'),
-(2, 0, 'stinus', 'stinus', 'Ulrika', 'Ohlsson', 'Farsight', '', NULL),
-(4, 1, 'stefan', 'stefan', 'stefan', 'stefan', NULL, 'tt', '2022-06-24 11:28:16');
+(1, 0, 'kalle', 'kalle', 'Pelle', 'Persson', 'combitech', 'tt', '2022-07-25 17:12:28'),
+(2, 0, 'stina', 'stinus', 'Ulrika', 'Orvarr', 'Farsight', 'tt', '2022-06-27 10:38:41'),
+(4, 1, 'stefan', 'stefan', 'stefan', 'stefan', NULL, 'tt', '2022-07-26 01:39:46'),
+(5, 0, 'ylva', 'tlvis', 'ylva', 'ylvis', 'Farsight', '', '2022-06-27 19:15:23');
 
 -- --------------------------------------------------------
 
@@ -65,8 +66,9 @@ CREATE TABLE `arbetsplats` (
 --
 
 INSERT INTO `arbetsplats` (`foretagsnamn`, `kontaktnummer`, `epost`) VALUES
-('combitech', '050050', 'inf@combitech.se'),
-('Farsight', '050500', 'infor@farsight.se');
+('combitech', '05005067', 'inf@combitech.se'),
+('Farsight', '0505007', 'infor@farsight.se'),
+('tytr', 'rtyrtyuuy', 'ryrtyuuuuull');
 
 -- --------------------------------------------------------
 
@@ -87,12 +89,13 @@ CREATE TABLE `elev` (
 --
 
 INSERT INTO `elev` (`pnr`, `fnamn`, `enamn`, `klass`, `epost`) VALUES
-('11', 'miss', 'missys', 'it3', 'mimi'),
-('222', 'bertil', 'bsson', 'te4', 'bb'),
-('333', 'ola', 'ohlsson', 'it3', 'ool'),
-('555', 'Sten', 'stensson', 'it3', 'sten'),
+('11', 'bertil', 'bsson', 'te4', 'bb'),
+('333', 'bertil', 'bsson', 'te4', 'bb'),
+('345', 'mirrus', 'folk', 'te1a', 'rte'),
+('555', 'Sten', 'Theo', 'it2', 'sten'),
+('56665', 'Olof', 'Skötkonung', 'Te5', 'er@re.se'),
 ('666', 'olle', 'ollsson', 'it3', 'oll'),
-('999', 'aaron', 'bensson', 'te4', 'aab');
+('678', 'mirrus', 'folk', 'te1a', 'rte');
 
 -- --------------------------------------------------------
 
@@ -125,7 +128,9 @@ CREATE TABLE `narvarande` (
 
 INSERT INTO `narvarande` (`pid`, `dag`, `status`, `registreratdatum`) VALUES
 (1, '2022-06-24', 2, '2022-06-24'),
-(3, '2022-06-24', 2, '2022-06-24');
+(1, '2022-07-07', 2, '2022-07-07'),
+(3, '2022-06-24', 2, '2022-06-24'),
+(4, '2022-06-23', 2, '2022-06-27');
 
 -- --------------------------------------------------------
 
@@ -144,8 +149,8 @@ CREATE TABLE `period` (
 --
 
 INSERT INTO `period` (`periodnamn`, `start`, `slut`) VALUES
-('ht22', '2022-09-19', '2022-10-28'),
-('vt21', '2022-06-05', '2022-06-30');
+('ht22', '2022-08-05', '2022-11-05'),
+('vt21', '2022-06-05', '2022-07-31');
 
 -- --------------------------------------------------------
 
@@ -154,8 +159,8 @@ INSERT INTO `period` (`periodnamn`, `start`, `slut`) VALUES
 --
 
 CREATE TABLE `placering` (
-  `id` int(11) NOT NULL,
-  `personnummer` varchar(13) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `personnummer` varchar(13) DEFAULT NULL,
   `period` varchar(15) NOT NULL,
   `foretagsnamn` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -164,11 +169,11 @@ CREATE TABLE `placering` (
 -- Dumpning av Data i tabell `placering`
 --
 
-INSERT INTO `placering` (`id`, `personnummer`, `period`, `foretagsnamn`) VALUES
+INSERT INTO `placering` (`pid`, `personnummer`, `period`, `foretagsnamn`) VALUES
 (1, '555', 'vt21', 'combitech'),
 (2, '11', 'vt21', 'Farsight'),
 (3, '11', 'ht22', 'combitech'),
-(4, '999', 'vt21', 'combitech'),
+(4, '666', 'vt21', 'combitech'),
 (5, '666', 'ht22', 'combitech');
 
 --
@@ -216,7 +221,7 @@ ALTER TABLE `period`
 -- Index för tabell `placering`
 --
 ALTER TABLE `placering`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`pid`),
   ADD KEY `pnr` (`personnummer`),
   ADD KEY `period` (`period`);
 
@@ -228,7 +233,7 @@ ALTER TABLE `placering`
 -- AUTO_INCREMENT för tabell `anvandare`
 --
 ALTER TABLE `anvandare`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT för tabell `exkluderadearbetsdagar`
@@ -240,7 +245,7 @@ ALTER TABLE `exkluderadearbetsdagar`
 -- AUTO_INCREMENT för tabell `placering`
 --
 ALTER TABLE `placering`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restriktioner för dumpade tabeller
@@ -256,7 +261,7 @@ ALTER TABLE `anvandare`
 -- Restriktioner för tabell `narvarande`
 --
 ALTER TABLE `narvarande`
-  ADD CONSTRAINT `pid` FOREIGN KEY (`pid`) REFERENCES `placering` (`id`);
+  ADD CONSTRAINT `pid` FOREIGN KEY (`pid`) REFERENCES `placering` (`pid`);
 
 --
 -- Restriktioner för tabell `placering`
