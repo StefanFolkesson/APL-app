@@ -1,6 +1,7 @@
 <?php
 require_once('funktioner.php');
-require_once('db.php');// admin
+require_once('db.php');
+// admin
 // ändra  elev
 // ändra  period
 // ändra företag
@@ -10,7 +11,6 @@ require_once('db.php');// admin
 
 //handledare
 // ändra frånvaro
-// TODO: denna procedur måste knna göras mycket snyggare med en funktion då allt arbete är mer eller mindre repetetivt. 
 
 
 if(all_request_set('hash','loginnamn')===true){
@@ -38,9 +38,6 @@ if(all_request_set('hash','loginnamn')===true){
             edit_table_data('placering','id','id','personnummer','period','foretagsnamn');
 
         }
-
-
-
         else {
             giveresponse($default_fail_response);
         }
@@ -48,16 +45,23 @@ if(all_request_set('hash','loginnamn')===true){
     else if(validhand($hash,$anv)){
 
         // datumformat : YY-MM-DD
-        if(all_request_set('datum','status','pid')===true){  // Denna är fel!
+        if(all_request_set('datum','status','pid')===true){ 
             $dag=$_REQUEST['datum'];
-            // TODO: check valid date before insert
             $status=$_REQUEST['status'];
             $pid=$_REQUEST['pid'];
-            $sql="INSERT INTO narvarande (pid,dag,status,registreratdatum) VALUES (?,?,?,now())";
-            $stmt= $conn->prepare($sql);
-            $stmt->bind_param("isi",$pid,$dag,$status);
-            $stmt->execute();
-            // send verification back maby
+            $sql="UPDATE narvarande SET status = $status and registreratdatum = now() WHERE narvarande.pid = $pid and dag=$datum";
+            $stmt = $conn->prepare($sql);
+            if($stmt===false){
+                giveresponse($default_fail_response);
+            }
+            $rc = $stmt->execute();
+            if($rc===false){
+                giveresponse($default_fail_response);
+            }
+            if($stmt->affected_rows==0){
+                giveresponse($default_fail_response);
+            }
+            giveresponse($default_ok_response);
         }
         else {
             giveresponse($default_fail_response);

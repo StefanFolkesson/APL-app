@@ -19,8 +19,9 @@ if(all_request_set('hash','loginnamn')===true){
         elseif(all_request_set('anvnamn','delhandledare')===true){
             deldata("anvandare","anvnamn",$_REQUEST['anvnamn']);
         }
-        elseif(all_request_set('id','delplacering')===true){
-            deldata("placering","id",$_REQUEST['id']);
+        elseif(all_request_set('pid','delplacering')===true){
+            deldata("placering","pid",$_REQUEST['pid']);
+            // Denna bör tömma närvarande med. Föm fel!!!!!!
         }
 
         else {

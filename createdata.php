@@ -6,6 +6,7 @@ require_once('db.php');
 // skapa period
 // skapa företag
 // skapa handledare
+// skapa placering
 
 // handledare
 // skapa registrering
@@ -53,7 +54,6 @@ if(all_request_set('hash','loginnamn')===true){
             $stmt->bind_param("isi",$pid,$dag,$status);
             $stmt->execute();
             giveresponse($default_ok_response);
-            // send verification back maby
         }
         else {
             giveresponse($default_fail_response);

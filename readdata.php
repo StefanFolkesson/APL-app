@@ -22,8 +22,8 @@ require_once('db.php');
 // visa rapporterad period elev
 
 // Handledare ( en annan fil?)
-// visa elever som ej är rapporterade
-// visa elever som ej är rapporterade idag...   --- Kanske samma
+// visa elever som ej är rapporterade idag
+// visa elever som ej är rapporterade tills idag...  
 
 if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
@@ -187,7 +187,6 @@ if(all_request_set('hash','loginnamn')===true){
                     if($result2->num_rows==0){
                         $data[]=[$pnr,$fnamn,$fnamn];
                     }
-        
                 }
                 printarray($data);
             }
@@ -224,7 +223,6 @@ if(all_request_set('hash','loginnamn')===true){
                     $datarow=[$row[1],$dag,$status];
                     $data[]=$datarow;
                 }
-
             }
             printarray($data);
     }
@@ -257,8 +255,6 @@ if(all_request_set('hash','loginnamn')===true){
             printarray($finalarr);
         }
         if(isset($_REQUEST['tillsnu'])){  //Ok,no errorcheck
-
-
             $sql = "SELECT placering.pid,period.start,period.slut,elev.pnr FROM anvandare 
                 JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                 JOIN period ON placering.period=period.periodnamn
