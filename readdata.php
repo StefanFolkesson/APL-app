@@ -248,8 +248,10 @@ if(all_request_set('hash','loginnamn')===true){
                 $stmt2 = $conn->prepare($sql2);
                 $stmt2->execute();
                 $result2= $stmt2->get_result();
+                $dag=new DateTime("now");
+                $dag=$dag->format("Y-m-d");
                 if($result2->num_rows==0){
-                    $finalarr[]=array_merge($row,['status'=>$status]);
+                    $finalarr[]=array_merge($row,['status'=>$status,'dag'=>$dag]);
                 }
             }
             printarray($finalarr);
@@ -281,7 +283,7 @@ if(all_request_set('hash','loginnamn')===true){
                         $rowdate=$resultdate->fetch_row();
                         $status = $rowdate[0];
                     }
-                    $datarow=['pnr'=>$row['pnr'],'dag'=>$dag,'status'=>$status];
+                    $datarow=['pnr'=>$row['pnr'],'dag'=>$dag,'status'=>$status,'pid'=>$placering];
                     $data[]=$datarow;
                 }
 

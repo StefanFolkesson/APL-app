@@ -57,28 +57,26 @@ function printelever($result){
     echo json_encode($arr);
 }
 
-function deldata($table,$attribute,$value,$type='string'){
+function deldata($table,$attribute,$value,$response=true){
     global $conn;
     global $default_fail_response;
     global $default_ok_response;
-    if($type=='integer'){
-        $sql="DELETE FROM $table WHERE $attribute=$value";
-    }
-    else {
-        $sql="DELETE FROM $table WHERE $attribute='$value'";
-    }
+    $sql="DELETE FROM $table WHERE $attribute='$value'";
+
     $stmt = $conn->prepare($sql);
-    if($stmt===false){
+    if($stmt===false && $response){
         giveresponse($default_fail_response);
     }
     $rc = $stmt->execute();
-    if($rc===false){
+    if($rc===false && $response){
         giveresponse($default_fail_response);
     }
-    if($stmt->affected_rows==0){
+    if($stmt->affected_rows==0 && $response){
         giveresponse($default_fail_response);
     }
-    giveresponse($default_ok_response);
+    if($response){
+        giveresponse($default_ok_response);
+    }
 }
 
 function all_request_set(...$req){

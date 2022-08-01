@@ -45,11 +45,12 @@ if(all_request_set('hash','loginnamn')===true){
     else if(validhand($hash,$anv)){
 
         // datumformat : YY-MM-DD
-        if(all_request_set('datum','status','pid')===true){ 
-            $dag=$_REQUEST['datum'];
+        if(all_request_set('datum','status','pid','editpresens')===true){ 
+            $datum=$_REQUEST['datum'];
             $status=$_REQUEST['status'];
             $pid=$_REQUEST['pid'];
-            $sql="UPDATE narvarande SET status = $status and registreratdatum = now() WHERE narvarande.pid = $pid and dag=$datum";
+            $sql="UPDATE narvarande SET status = $status WHERE narvarande.pid = $pid and dag='$datum'";
+  
             $stmt = $conn->prepare($sql);
             if($stmt===false){
                 giveresponse($default_fail_response);

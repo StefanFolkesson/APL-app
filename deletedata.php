@@ -20,7 +20,9 @@ if(all_request_set('hash','loginnamn')===true){
             deldata("anvandare","anvnamn",$_REQUEST['anvnamn']);
         }
         elseif(all_request_set('pid','delplacering')===true){
+            deldata("narvarande","pid",$_REQUEST['pid'],false);
             deldata("placering","pid",$_REQUEST['pid']);
+
             // Denna bör tömma närvarande med. Föm fel!!!!!!
         }
 
