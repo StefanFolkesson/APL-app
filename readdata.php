@@ -134,6 +134,7 @@ if(all_request_set('hash','loginnamn')===true){
                 while($row2 = $result2->fetch_row()){
                     $pid=$row2[0];
                     // Plocka ut all registrerad data
+                    echo $pid;
                     $sql3 = "SELECT status,pid,elev.fnamn, elev.enamn from narvarande  join placering on pid = placering.id join elev on placering.personnummer=elev.pnr where pid=?";
                     $stmt3 = $conn->prepare($sql3);
                     $stmt3->bind_param("s",$pid);
@@ -164,11 +165,14 @@ if(all_request_set('hash','loginnamn')===true){
         }
 
         if(isset($_REQUEST['orapporterade'])){  // OK
-            // visa ej rapporterade elever
-            $sql = "SELECT pid,pnr,fnamn,enamn FROM placering 
+            // visa ej rapporterade elever idag
+            $sql = "SELECT pid,pnr,fnamn,enamn,foretagsnamn FROM placering 
                     JOIN period ON placering.period=period.periodnamn 
                     JOIN elev ON elev.pnr=placering.personnummer
-                    WHERE period.start<now() and period.slut>now()";
+                    WHERE period.start<now() 
+                    AND period.slut>now()
+                    AND WHERE WEEKDAY(now())>=0 
+                    AND WEEKDAY(now())<5;";
             $result = send_query($sql);
             if($result->num_rows==0){
                 printresult($result);
@@ -185,7 +189,7 @@ if(all_request_set('hash','loginnamn')===true){
                     $sql2 = "SELECT status FROM narvarande WHERE pid=$period and dag='$dag'";
                     $result2 = send_query($sql2);
                     if($result2->num_rows==0){
-                        $data[]=[$pnr,$fnamn,$fnamn];
+                        $data[]=['pnr'=>$pnr,'fnamn'=>$fnamn,'enamn'=>$enamn,'status'=>'Ej registrerad','foretagsnamn'=>$row[4]];
                     }
                 }
                 printarray($data);
@@ -236,7 +240,9 @@ if(all_request_set('hash','loginnamn')===true){
                     JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                     JOIN period ON placering.period=period.periodnamn
                     JOIN elev ON placering.personnummer = elev.pnr
-                    WHERE anvnamn=? AND start<now() AND slut>now()";
+                    WHERE anvnamn=? AND start<now() AND slut>now()
+                    AND WHERE WEEKDAY(now())>=0 
+                    AND WEEKDAY(now())<5";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s",$anv);
             $stmt->execute();
@@ -275,16 +281,33 @@ if(all_request_set('hash','loginnamn')===true){
                 for($i = $begin; $i < $end; $i->modify('+1 day')){
                     $dag=$i->format("Y-m-d");
                     $status="Ej registrerad";
-                    $sqldate="SELECT status FROM narvarande WHERE pid=$placering AND dag='$dag'";
-                    $stmtdate = $conn->prepare($sqldate);
-                    $stmtdate->execute();
-                    $resultdate = $stmtdate->get_result();  
-                    if($resultdate->num_rows>0){
-                        $rowdate=$resultdate->fetch_row();
-                        $status = $rowdate[0];
+
+                    // TODO: check special days!
+
+                    // Kolla om det är lö sö
+                    $dt1 = strtotime($dag);
+                    $dt2 = date("l", $dt1);
+                    $dt3 = strtolower($dt2);
+                    if(($dt3 == "saturday" )|| ($dt3 == "sunday"))
+                    {
+                        ;
+                    } 
+                    else
+                    {
+                        $sqldate="SELECT status FROM narvarande WHERE pid=$placering AND dag='$dag'";
+                        $stmtdate = $conn->prepare($sqldate);
+                        $stmtdate->execute();
+                        $resultdate = $stmtdate->get_result();  
+                        if($resultdate->num_rows>0){
+                            $rowdate=$resultdate->fetch_row();
+                            $status = $rowdate[0];
+                        }
+                        $datarow=['pnr'=>$row['pnr'],'dag'=>$dag,'status'=>$status,'pid'=>$placering];
+                        $data[]=$datarow;
                     }
-                    $datarow=['pnr'=>$row['pnr'],'dag'=>$dag,'status'=>$status,'pid'=>$placering];
-                    $data[]=$datarow;
+
+
+
                 }
 
             }

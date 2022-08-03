@@ -16,7 +16,7 @@ require_once('db.php');
 if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['loginnamn'];
-    if (validadmin("tt",$anv)==1){
+    if (validadmin($hash,$anv)==1){
         // Ny elev
         if(all_request_set('editelev','originpnr')===true){
             edit_table_data('elev','pnr','originpnr','pnr','fnamn','enamn','klass','epost');

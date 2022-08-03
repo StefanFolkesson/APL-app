@@ -46,14 +46,26 @@ if(all_request_set('hash','loginnamn')===true){
         // datumformat : YY-MM-DD
         if(all_request_set('datum','status','pid','nypresens')===true){
             $dag=$_REQUEST['datum'];
-            // TODO: check valid date before insert
-            $status=$_REQUEST['status'];
-            $pid=$_REQUEST['pid'];
-            $sql="INSERT INTO narvarande (pid,dag,status,registreratdatum) VALUES (?,?,?,now())";
-            $stmt= $conn->prepare($sql);
-            $stmt->bind_param("isi",$pid,$dag,$status);
-            $stmt->execute();
-            giveresponse($default_ok_response);
+
+            // TODO: check special days!
+
+            $dt1 = strtotime($dag);
+            $dt2 = date("l", $dt1);
+            $dt3 = strtolower($dt2);
+            if(($dt3 == "saturday" )|| ($dt3 == "sunday"))
+            {
+                giveresponse($default_fail_response);
+            } 
+            else
+            {
+                $status=$_REQUEST['status'];
+                $pid=$_REQUEST['pid'];
+                $sql="INSERT INTO narvarande (pid,dag,status,registreratdatum) VALUES (?,?,?,now())";
+                $stmt= $conn->prepare($sql);
+                $stmt->bind_param("isi",$pid,$dag,$status);
+                $stmt->execute();
+                giveresponse($default_ok_response);
+            }
         }
         else {
             giveresponse($default_fail_response);
