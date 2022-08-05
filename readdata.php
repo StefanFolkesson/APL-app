@@ -103,6 +103,19 @@ if(all_request_set('hash','loginnamn')===true){
             if(!is_null($result))
             printresult($result);
         }
+
+        if(isset($_REQUEST['ute'])){
+            // visa placerade elever som är ute   
+            $sql="SELECT * FROM placering JOIN 
+            period ON placering.period = period.periodnamn WHERE
+            period.start<now() AND
+            period.slut>=now()";
+            $result = send_query($sql);
+            if(!is_null($result))
+            printresult($result);
+        }
+
+
         if(isset($_REQUEST['oplacerade'])){
             // visa oplacerade elever   
             $sql="SELECT pnr,fnamn,enamn,klass from elev left join placering on placering.personnummer = elev.pnr where placering.personnummer IS NULL;";
@@ -171,8 +184,8 @@ if(all_request_set('hash','loginnamn')===true){
                     JOIN elev ON elev.pnr=placering.personnummer
                     WHERE period.start<now() 
                     AND period.slut>now()
-                    AND WHERE WEEKDAY(now())>=0 
-                    AND WEEKDAY(now())<5;";
+                    AND WEEKDAY(now())>=0 
+                    AND WEEKDAY(now())<5";
             $result = send_query($sql);
             if($result->num_rows==0){
                 printresult($result);
@@ -200,7 +213,7 @@ if(all_request_set('hash','loginnamn')===true){
             $pnr = $_REQUEST['elev'];
             $period = $_REQUEST['period'];
             // visa rapporterad period elev
-            $sql = "SELECT id,personnummer,period,placering.foretagsnamn,period.start,period.slut,elev.fnamn,elev.enamn,arbetsplats.foretagsnamn from placering
+            $sql = "SELECT pid,personnummer,period,placering.foretagsnamn,start,slut,elev.fnamn,elev.enamn,arbetsplats.foretagsnamn from placering
              join period on placering.period=period.periodnamn 
              join elev on personnummer=elev.pnr
              join arbetsplats on placering.foretagsnamn=arbetsplats.foretagsnamn
@@ -209,23 +222,35 @@ if(all_request_set('hash','loginnamn')===true){
             $stmt->bind_param("ss",$period,$pnr);
             $stmt->execute();
             $result = $stmt->get_result();
-            while($row = $result->fetch_row()){
-                $begin = new DateTime($row[4]);
-                $end   = new DateTime($row[5]);
-                $placering = $row[0];
+            while($row = $result->fetch_assoc()){
+                $begin = new DateTime($row['start']);
+                $end   = new DateTime($row['slut']);
+                $placering = $row['pid'];
                 for($i = $begin; $i <= $end; $i->modify('+1 day')){
                     $dag=$i->format("Y-m-d");
                     $status="Ej registrerad";
-                    $sqldate="SELECT status FROM narvarande WHERE pid=$placering AND dag='$dag'";
-                    $stmtdate = $conn->prepare($sqldate);
-                    $stmtdate->execute();
-                    $resultdate = $stmtdate->get_result();  
-                    if($resultdate->num_rows>0){
-                        $rowdate=$resultdate->fetch_row();
-                        $status = $rowdate[0];
+                    $dt1 = strtotime($dag);
+                    $dt2 = date("l", $dt1);
+                    $dt3 = strtolower($dt2);
+                    if(($dt3 == "saturday" )|| ($dt3 == "sunday"))
+                    {
+                        ;
+                    } 
+                    else
+                    {
+                        $sqldate="SELECT status FROM narvarande WHERE 
+                                pid=$placering 
+                                AND dag='$dag'";
+                        $stmtdate = $conn->prepare($sqldate);
+                        $stmtdate->execute();
+                        $resultdate = $stmtdate->get_result();  
+                        if($resultdate->num_rows>0){
+                            $rowdate=$resultdate->fetch_row();
+                            $status = $rowdate[0];
+                        }
+                        $datarow=array_merge($row,['status'=>$status,'dag'=>$dag]);
+                        $data[]=$datarow;
                     }
-                    $datarow=[$row[1],$dag,$status];
-                    $data[]=$datarow;
                 }
             }
             printarray($data);
@@ -235,13 +260,12 @@ if(all_request_set('hash','loginnamn')===true){
     else if($resp==0){  // OK,no errorcheck
         if(isset($_REQUEST['idag'])){
                 // visa elever som ej är rapporterade
-            // TODO: check if today is a valid day? well or not.. since an invalid day shouldnt have any records. but hey we have to do that since day isnt saved until its recorded 
             $sql = "SELECT placering.pid,elev.pnr,elev.fnamn,elev.enamn FROM anvandare 
                     JOIN placering ON anvandare.foretagid=placering.foretagsnamn 
                     JOIN period ON placering.period=period.periodnamn
                     JOIN elev ON placering.personnummer = elev.pnr
                     WHERE anvnamn=? AND start<now() AND slut>now()
-                    AND WHERE WEEKDAY(now())>=0 
+                    AND WEEKDAY(now())>=0 
                     AND WEEKDAY(now())<5";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s",$anv);
