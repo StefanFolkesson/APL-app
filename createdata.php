@@ -14,10 +14,6 @@ if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['loginnamn'];
     if (validadmin("tt",$anv)==1){
-    // skapa elev
-    // skapa period
-    // skapa företag
-    // skapa handledare
         // Ny elev
         if(all_request_set('pnr','fnamn','enamn','klass','epost','nyelev')===true){
             create_table_data('elev','pnr','fnamn','enamn','klass','epost');
@@ -42,13 +38,11 @@ if(all_request_set('hash','loginnamn')===true){
         }
     }
     else if(validhand($hash,$anv)){
-
         // datumformat : YY-MM-DD
         if(all_request_set('datum','status','pid','nypresens')===true){
             $dag=$_REQUEST['datum'];
 
             // TODO: check special days!
-
             $dt1 = strtotime($dag);
             $dt2 = date("l", $dt1);
             $dt3 = strtolower($dt2);
@@ -70,7 +64,6 @@ if(all_request_set('hash','loginnamn')===true){
         else {
             giveresponse($default_fail_response);
         }
-
     }
     else {
         giveresponse($default_fail_hash_response);

@@ -40,6 +40,7 @@ function printresult($result){
     $arr['data']=$data;
     echo json_encode($arr);
 }
+
 function printarray($array){
     global $default_ok_response;
     $arr=$default_ok_response;
@@ -88,7 +89,6 @@ function all_request_set(...$req){
     return true;
 }
 
-
 function edit_table_data($table,$where,$wherevalue, ...$dbfields){
     global $conn;
     global $default_fail_response;
@@ -129,7 +129,6 @@ function create_table_data($table, ...$dbfields){
     global $conn;
     global $default_fail_response;
     global $default_ok_response;
-
     $paramarr=[];
     $sqlafter=[];
     $sqlarr=[];
@@ -139,11 +138,9 @@ function create_table_data($table, ...$dbfields){
             $sqlarr[]="$field";
             $sqlafter[]="?";
             $paramarr[]=$_REQUEST[$field];
-
         }
     }
     $sql=$sql.implode(',',$sqlarr).") VALUES (".implode(',',$sqlafter).")";
-  //  die($sql.implode(",",$paramarr));
     $stmt = $conn->prepare($sql);
     if($stmt===false){
         giveresponse($default_fail_response);

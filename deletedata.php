@@ -2,7 +2,6 @@
 require_once('funktioner.php');
 require_once('db.php');
 
-
 if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
     $anv=$_REQUEST['loginnamn'];
@@ -22,10 +21,7 @@ if(all_request_set('hash','loginnamn')===true){
         elseif(all_request_set('pid','delplacering')===true){
             deldata("narvarande","pid",$_REQUEST['pid'],false);
             deldata("placering","pid",$_REQUEST['pid']);
-
-            // Denna bör tömma närvarande med. Föm fel!!!!!!
         }
-
         else {
             giveresponse($default_fail_response);
         }

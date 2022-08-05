@@ -17,13 +17,13 @@ require_once('db.php');
 // foretagsid X
 // foretag X
 // visa rapporterade elever
-// visa alla elever som skall rapporteras idag
-// visa ej rapporterade elever
-// visa rapporterad period elev
+// visa alla elever som skall rapporteras idag x
+// visa ej rapporterade elever x
+// visa rapporterad period elev x
 
-// Handledare ( en annan fil?)
-// visa elever som ej är rapporterade idag
-// visa elever som ej är rapporterade tills idag...  
+// Handledare 
+// visa elever som ej är rapporterade idag x
+// visa elever som ej är rapporterade tills idag...   x
 
 if(all_request_set('hash','loginnamn')===true){
     $hash=$_REQUEST['hash'];
